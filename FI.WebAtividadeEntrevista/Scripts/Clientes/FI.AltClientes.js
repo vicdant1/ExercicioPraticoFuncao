@@ -16,8 +16,6 @@ $(document).ready(function () {
         beneficiarios = obj.Beneficiarios;
     }
 
-    console.log(obj);
-
     $("#CPF").mask("999.999.999-99");
     $('#formCadastro').submit(function (e) {
         e.preventDefault();

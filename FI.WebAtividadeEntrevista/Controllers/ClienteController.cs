@@ -82,7 +82,6 @@ namespace WebAtividadeEntrevista.Controllers
                     }
                 }
             }
-
            
             return Json("Cadastro efetuado com sucesso");
         }
@@ -137,7 +136,6 @@ namespace WebAtividadeEntrevista.Controllers
                         IdCliente = model.Id
                     });
                 }
-
 
                 foreach (var beneficiario in beneficiariosCliente)
                 {
