@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using FI.AtividadeEntrevista.DML;
 using FI.AtividadeEntrevista.Extension;
 using FI.AtividadeEntrevista.Util;
+using FI.WebAtividadeEntrevista.Models;
 
 namespace WebAtividadeEntrevista.Controllers
 {
@@ -121,6 +122,45 @@ namespace WebAtividadeEntrevista.Controllers
                 return Json("Já existe um cliente cadastrado com o mesmo CPF.");
             }
 
+            if(model.Beneficiarios != null)
+            {
+                BoBeneficiario boBeneficiario = new BoBeneficiario();
+                var beneficiariosCliente = boBeneficiario.Listar(model.Id);
+
+                var beneficiariosParaAdicionar = model.Beneficiarios.Where(benef => !beneficiariosCliente.Any(benefCliente => benefCliente.CPF.LimparCPF().Equals(benef.CPF.LimparCPF()))).ToList();
+                foreach (var beneficiario in beneficiariosParaAdicionar)
+                {
+                    boBeneficiario.Incluir(new Beneficiario()
+                    {
+                        CPF = beneficiario.CPF.LimparCPF(),
+                        Nome = beneficiario.Nome,
+                        IdCliente = model.Id
+                    });
+                }
+
+
+                foreach (var beneficiario in beneficiariosCliente)
+                {
+                    if (!model.Beneficiarios.Any(x => x.CPF.LimparCPF().Equals(beneficiario.CPF.LimparCPF())))
+                    {
+                        boBeneficiario.Excluir(beneficiario.Id);
+                    }
+                    else
+                    {
+                        var beneficiarioModel = model.Beneficiarios.FirstOrDefault(x => x.CPF.LimparCPF().Equals(beneficiario.CPF.LimparCPF()));
+                        if(boBeneficiario.VerificarBeneficiarioPorCliente(beneficiario.CPF, model.Id))
+                        {
+                            boBeneficiario.Alterar(new Beneficiario()
+                            {
+                                Id = beneficiario.Id,
+                                CPF = beneficiarioModel.CPF.LimparCPF(),
+                                Nome = beneficiarioModel.Nome,
+                            });
+                        }
+                    }
+                }
+            }
+
             bo.Alterar(new Cliente()
             {
                 Id = model.Id,
@@ -148,6 +188,8 @@ namespace WebAtividadeEntrevista.Controllers
 
             if (cliente != null)
             {
+                BoBeneficiario boBeneficiario = new BoBeneficiario();
+                List<Beneficiario> beneficiarios = boBeneficiario.Listar(cliente.Id);
                 model = new ClienteModel()
                 {
                     Id = cliente.Id,
@@ -160,7 +202,13 @@ namespace WebAtividadeEntrevista.Controllers
                     Nome = cliente.Nome,
                     Sobrenome = cliente.Sobrenome,
                     Telefone = cliente.Telefone,
-                    CPF = cliente.CPF.LimparCPF()
+                    CPF = cliente.CPF.LimparCPF(),
+                    Beneficiarios = beneficiarios.Select(x => new BeneficiarioModel()
+                    {
+                        Id = x.Id.ToString(),
+                        CPF = x.CPF.FormatAsCPF(),
+                        Nome = x.Nome
+                    }).ToList()
                 };
             }
 

@@ -10,11 +10,21 @@ namespace FI.AtividadeEntrevista.Util
     public static class CPFHelper
     {
         /// <summary>
+        /// Formata uma string como um CPF
+        /// </summary>
+        /// <param name="text">String original</param>
+        /// <returns>String com formato de CPF</returns>
+        public static string FormatAsCPF(this string text)
+        {
+            text = text.LimparCPF().PadLeft(11, '0');
+            return string.Concat(text.Substring(0, 3), ".", text.Substring(3, 3), ".", text.Substring(6, 3), "-", text.Substring(9, 2));
+        }
+
+        /// <summary>
         /// Verificar se o CPF é válido de acordo com o cálculo padrão
         /// </summary>
         /// <param name="CPF"></param>
         /// <returns></returns>
-
         public static bool VerificarCPFValido(string CPF)
         {
             int[] multiplicadorInterno = new int[9] { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
