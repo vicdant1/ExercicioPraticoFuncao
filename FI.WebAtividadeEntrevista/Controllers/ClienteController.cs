@@ -38,18 +38,17 @@ namespace WebAtividadeEntrevista.Controllers
                 return Json(string.Join(Environment.NewLine, erros));
             }
 
+            model.CPF = model.CPF.LimparCPF();
             if(!bo.VerificarCPFValido(model.CPF))
             {
                 Response.StatusCode = 400;
                 return Json("CPF inválido");
             }
-
             if(bo.VerificarExistencia(model.CPF))
             {
                 Response.StatusCode = 400;
                 return Json("Já existe um cliente cadastrado com o mesmo CPF.");
             }
-
 
             model.Id = bo.Incluir(new Cliente()
             {                    
@@ -62,7 +61,7 @@ namespace WebAtividadeEntrevista.Controllers
                 Nome = model.Nome,
                 Sobrenome = model.Sobrenome,
                 Telefone = model.Telefone,
-                CPF = model.CPF.LimparCPF()
+                CPF = model.CPF
             });
 
            
@@ -83,25 +82,43 @@ namespace WebAtividadeEntrevista.Controllers
                 Response.StatusCode = 400;
                 return Json(string.Join(Environment.NewLine, erros));
             }
-            else
+
+            Cliente cliente = bo.Consultar(model.Id);
+            if(cliente == null)
             {
-                bo.Alterar(new Cliente()
-                {
-                    Id = model.Id,
-                    CEP = model.CEP,
-                    Cidade = model.Cidade,
-                    Email = model.Email,
-                    Estado = model.Estado,
-                    Logradouro = model.Logradouro,
-                    Nacionalidade = model.Nacionalidade,
-                    Nome = model.Nome,
-                    Sobrenome = model.Sobrenome,
-                    Telefone = model.Telefone,
-                    CPF = model.CPF.LimparCPF()
-                });
-                               
-                return Json("Cadastro alterado com sucesso");
+                Response.StatusCode = 400;
+                return Json("Cliente não encontrado");
             }
+
+            model.CPF = model.CPF.LimparCPF();
+            if (!bo.VerificarCPFValido(model.CPF))
+            {
+                Response.StatusCode = 400;
+                return Json("CPF inválido");
+            }
+
+            if (!cliente.CPF.Equals(model.CPF) && bo.VerificarExistencia(model.CPF))
+            {
+                Response.StatusCode = 400;
+                return Json("Já existe um cliente cadastrado com o mesmo CPF.");
+            }
+
+            bo.Alterar(new Cliente()
+            {
+                Id = model.Id,
+                CEP = model.CEP,
+                Cidade = model.Cidade,
+                Email = model.Email,
+                Estado = model.Estado,
+                Logradouro = model.Logradouro,
+                Nacionalidade = model.Nacionalidade,
+                Nome = model.Nome,
+                Sobrenome = model.Sobrenome,
+                Telefone = model.Telefone,
+                CPF = model.CPF
+            });
+                               
+            return Json("Cadastro alterado com sucesso");
         }
 
         [HttpGet]
