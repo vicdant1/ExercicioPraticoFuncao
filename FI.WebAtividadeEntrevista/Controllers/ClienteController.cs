@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using FI.AtividadeEntrevista.DML;
 using FI.AtividadeEntrevista.Extension;
+using FI.AtividadeEntrevista.Util;
 
 namespace WebAtividadeEntrevista.Controllers
 {
@@ -39,7 +40,7 @@ namespace WebAtividadeEntrevista.Controllers
             }
 
             model.CPF = model.CPF.LimparCPF();
-            if(!bo.VerificarCPFValido(model.CPF))
+            if(!CPFHelper.VerificarCPFValido(model.CPF))
             {
                 Response.StatusCode = 400;
                 return Json("CPF inválido");
@@ -91,7 +92,7 @@ namespace WebAtividadeEntrevista.Controllers
             }
 
             model.CPF = model.CPF.LimparCPF();
-            if (!bo.VerificarCPFValido(model.CPF))
+            if (!CPFHelper.VerificarCPFValido(model.CPF))
             {
                 Response.StatusCode = 400;
                 return Json("CPF inválido");

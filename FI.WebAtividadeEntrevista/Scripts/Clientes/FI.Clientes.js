@@ -1,4 +1,4 @@
-﻿
+﻿var beneficiarios = [];
 $(document).ready(function () {
 
     $("#CPF").mask("999.999.999-99");
@@ -37,6 +37,99 @@ $(document).ready(function () {
     
 })
 
+function AbrirModalBeneficiarios(e) {
+    e.preventDefault();
+
+    let modalContent = `
+        <div class="row" style="display: flex; align-items: center">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="CPFBeneficiario">CPF:</label>
+                    <input required="required" type="text" class="form-control" id="CPFBeneficiario" name="CPFBeneficiario" placeholder="Ex.: 010.011.111-00" maxlength="11">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="NomeBeneficiario">Nome:</label>
+                    <input required="required" type="text" class="form-control" id="NomeBeneficiario" name="NomeBeneficiario" placeholder="Ex.: Maria" maxlength="50">
+                </div>
+            </div>
+
+            <div class="col-sm-2">
+                <button class="btn btn-success text-center" onclick="AdicionarBeneficiario()">Incluir</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-striped">
+                <thead>
+                        <tr>
+                            <th style="width: 20%">CPF</th>
+                            <th style="width: 30%">Nome</th>
+                            <th style="width: 30%">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="BeneficiariosGrid"></tbody>
+                </table>
+            </div>
+        </div>
+    `;
+
+    ModalDialog('Beneficiários', modalContent);
+    $("#CPFBeneficiario").mask("999.999.999-99");
+}
+
+
+function AdicionarBeneficiario() {
+    var beneficiarioId = Math.random().toString().replace('.', '');
+
+    let cpf = $("#CPFBeneficiario").val();
+    let nome = $("#NomeBeneficiario").val();
+
+    if (!cpf || !nome) {
+        ModalDialog("Campos obrigatórios", "Os campos CPF e Nome são obrigatórios.");
+        return;
+    }
+
+    if (beneficiarios.filter(element => element.CPF === cpf).length > 0) {
+        ModalDialog("Beneficiário já adicionado", "O beneficiário informado já foi adicionado.");
+        return;
+    }
+
+    if (!validarCPF(cpf)) {
+        ModalDialog("CPF inválido", "O CPF informado é inválido.");
+        return;
+    }
+
+    beneficiarios.push({ Id: beneficiarioId, CPF: cpf, Nome: nome });
+
+    $("#BeneficiariosGrid").append(`<tr id="${beneficiarioId}">
+                                        <td>${cpf}</td>
+                                        <td>${nome}</td>
+                                        <td>
+                                            <button class="btn btn-primary" onclick="AlterarBeneficiario('${beneficiarioId}')">Alterar</button>
+                                            <button class="btn btn-primary" onclick="RemoverBeneficiario('${beneficiarioId}')">Excluir</button>
+                                        </td>
+                                    </tr>`);
+
+    $("#CPFBeneficiario").val('');
+    $("#NomeBeneficiario").val('');
+}
+
+function RemoverBeneficiario(id) {
+    beneficiarios = beneficiarios.filter(element => element.Id !== id);
+    $(`#${id}`).remove();
+}
+
+function AlterarBeneficiario(id) {
+    let beneficiario = beneficiarios.find(element => element.Id === id);
+
+    $("#CPFBeneficiario").val(beneficiario.CPF);
+    $("#NomeBeneficiario").val(beneficiario.Nome);
+
+    RemoverBeneficiario(id);
+}
+
 function ModalDialog(titulo, texto) {
     var random = Math.random().toString().replace('.', '');
     var texto = '<div id="' + random + '" class="modal fade">                                                               ' +
@@ -58,5 +151,9 @@ function ModalDialog(titulo, texto) {
         '</div> <!-- /.modal -->                                                                                        ';
 
     $('body').append(texto);
+
+    $('#' + random).on('hidden.bs.modal', function () {
+        $('#' + random).remove();
+    });
     $('#' + random).modal('show');
 }

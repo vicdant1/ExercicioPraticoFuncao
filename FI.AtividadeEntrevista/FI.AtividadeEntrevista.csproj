@@ -48,6 +48,7 @@
     <Compile Include="DML\Cliente.cs" />
     <Compile Include="Extension\StringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\CPFHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="DAL\Clientes\Procedures\FI_SP_AltCliente.sql" />
