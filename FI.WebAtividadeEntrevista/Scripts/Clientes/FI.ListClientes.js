@@ -22,7 +22,10 @@ $(document).ready(function () {
                 },
                 CPF: {
                     title: 'CPF',
-                    width: '30%'
+                    width: '30%',
+                    display: function (data) {
+                        return formatarCpf(data.record.CPF);
+                    }
                 },
                 Alterar: {
                     title: '',

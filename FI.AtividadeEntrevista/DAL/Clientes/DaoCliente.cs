@@ -1,4 +1,5 @@
 ﻿using FI.AtividadeEntrevista.DML;
+using FI.AtividadeEntrevista.Extension;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -56,7 +57,7 @@ namespace FI.AtividadeEntrevista.DAL
         {
             List<System.Data.SqlClient.SqlParameter> parametros = new List<System.Data.SqlClient.SqlParameter>();
 
-            parametros.Add(new System.Data.SqlClient.SqlParameter("CPF", CPF));
+            parametros.Add(new System.Data.SqlClient.SqlParameter("CPF", CPF.LimparCPF()));
 
             DataSet ds = base.Consultar("FI_SP_VerificaCliente", parametros);
 

@@ -1,5 +1,7 @@
 ﻿
 $(document).ready(function () {
+
+
     if (obj) {
         $('#formCadastro #Nome').val(obj.Nome);
         $('#formCadastro #CEP').val(obj.CEP);
@@ -13,6 +15,7 @@ $(document).ready(function () {
         $('#formCadastro #Telefone').val(obj.Telefone);
     }
 
+    $("#CPF").mask("999.999.999-99");
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
         
