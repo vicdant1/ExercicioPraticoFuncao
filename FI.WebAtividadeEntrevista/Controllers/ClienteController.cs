@@ -65,6 +65,23 @@ namespace WebAtividadeEntrevista.Controllers
                 CPF = model.CPF
             });
 
+            if(model.Beneficiarios != null)
+            {
+                BoBeneficiario boBeneficiario = new BoBeneficiario();
+                foreach(var beneficiario in model.Beneficiarios)
+                {
+                    if(!boBeneficiario.VerificarBeneficiarioPorCliente(beneficiario.CPF, model.Id))
+                    {
+                        boBeneficiario.Incluir(new Beneficiario()
+                        {
+                            CPF = beneficiario.CPF.LimparCPF(),
+                            Nome = beneficiario.Nome,
+                            IdCliente = model.Id
+                        });
+                    }
+                }
+            }
+
            
             return Json("Cadastro efetuado com sucesso");
         }
@@ -145,8 +162,6 @@ namespace WebAtividadeEntrevista.Controllers
                     Telefone = cliente.Telefone,
                     CPF = cliente.CPF.LimparCPF()
                 };
-
-            
             }
 
             return View(model);

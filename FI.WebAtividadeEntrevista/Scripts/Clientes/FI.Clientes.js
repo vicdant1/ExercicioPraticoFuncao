@@ -5,7 +5,6 @@ $(document).ready(function () {
 
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
-        console.log(beneficiarios);
         $.ajax({
             url: urlPost,
             method: "POST",
@@ -33,6 +32,7 @@ $(document).ready(function () {
             function (r) {
                 ModalDialog("Sucesso!", r)
                 $("#formCadastro")[0].reset();
+                beneficiarios = [];
             }
         });
     })
@@ -78,6 +78,18 @@ function AbrirModalBeneficiarios(e) {
     `;
 
     ModalDialog('Beneficiários', modalContent);
+
+    beneficiarios.map((item) => {
+        $("#BeneficiariosGrid").append(`<tr id="${item.Id}">
+                                        <td>${item.CPF}</td>
+                                        <td>${item.Nome}</td>
+                                        <td>
+                                            <button class="btn btn-primary" onclick="AlterarBeneficiario('${item.Id}')">Alterar</button>
+                                            <button class="btn btn-primary" onclick="RemoverBeneficiario('${item.Id}')">Excluir</button>
+                                        </td>
+                                    </tr>`)
+    });
+
     $("#CPFBeneficiario").mask("999.999.999-99");
 }
 
